@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login — KhalidXHost</title><link rel="icon" href="/static/favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css">
+</head><body>
+<nav class="top"><div class="wrap in"><a href="/" class="logo"><i>⚡</i>Khalid<span class="grad">XHost</span></a><div class="links"><a href="/docs">API Docs</a></div></div></nav>
+<div class="auth-wrap"><div class="card auth-card">
+  <div class="tabs"><button id="t-login" class="on">Login</button><button id="t-reg">Create account</button></div>
+  <h2 id="ttl" style="letter-spacing:-.6px">Welcome back 👋</h2>
+  <p class="mut" id="sub" style="font-size:14px;margin-top:4px">Sign in to manage your VPS machines.</p>
+  <label class="f">Username</label><input id="u" autocomplete="username" maxlength="24" placeholder="yourname">
+  <div id="tgrow" style="display:none"><label class="f">Telegram username <span class="mut">(optional — helps @khalid_dev find you for API access)</span></label><input id="tg" maxlength="64" placeholder="@username"></div>
+  <label class="f">Password</label><input id="p" type="password" autocomplete="current-password" maxlength="128" placeholder="••••••••">
+  <div class="err" id="err"></div>
+  <button class="btn primary" id="go" style="width:100%;margin-top:10px;padding:14px">Login</button>
+  <p class="mut" style="font-size:12.5px;margin-top:16px;text-align:center">By continuing you agree to use this service responsibly.</p>
+</div></div>
+<script src="/static/js/common.js"></script>
+<script src="/static/js/auth.js"></script>
+</body></html>

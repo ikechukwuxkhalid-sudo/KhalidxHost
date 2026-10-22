@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="admin-path" content="__ADMIN_PATH__">
+<title>Console</title><link rel="icon" href="/static/favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css">
+</head><body>
+<div id="login" class="auth-wrap" style="display:none"><div class="card auth-card" style="text-align:center">
+  <div style="font-size:46px">👑</div><h2 style="letter-spacing:-.6px;margin:8px 0 4px">Owner Console</h2><p class="mut" style="font-size:14px">Restricted area. Authorized access only.</p>
+  <input id="pw" type="password" placeholder="Admin password" autocomplete="current-password" style="margin-top:22px;text-align:center">
+  <div class="err" id="err"></div><button class="btn primary" id="go" style="width:100%;margin-top:8px;padding:14px">Unlock</button>
+</div></div>
+
+<div id="app" style="display:none">
+<nav class="top"><div class="wrap in"><div class="logo"><i>👑</i>Owner <span class="grad">Console</span></div>
+  <div class="links"><span class="tag g">@khalid_dev</span><a id="out" style="cursor:pointer">Logout</a></div></div></nav>
+<div class="wrap" style="padding-top:28px;padding-bottom:70px">
+  <div class="grid g4" id="stats" style="margin-bottom:24px"></div>
+  <div class="tabs" style="max-width:640px"><button data-t="users" class="on">👥 Users</button><button data-t="keys">🔑 API Keys</button><button data-t="vps">🖥 VPS</button><button data-t="logs">📜 Activity</button></div>
+  <div id="panel"></div>
+</div></div>
+<div class="modal" id="modal"><div class="box" id="modalbox"></div></div>
+<script src="/static/js/common.js"></script>
+<script src="/static/js/admin.js"></script>
+</body></html>

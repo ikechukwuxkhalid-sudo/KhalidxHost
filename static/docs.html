@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>API Docs — KhalidXHost</title><link rel="icon" href="/static/favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css">
+<style>.ep{margin-bottom:18px}.ep h3{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-family:var(--mono);font-size:15px}.m{padding:3px 9px;border-radius:7px;font-size:12px;font-weight:800}.GET{background:rgba(0,229,168,.15);color:var(--b)}.POST{background:rgba(124,92,255,.2);color:#a994ff}.DELETE{background:rgba(255,84,112,.15);color:var(--err)}.ep p{margin:8px 0 12px}</style>
+</head><body>
+<nav class="top"><div class="wrap in"><a href="/" class="logo"><i>⚡</i>Khalid<span class="grad">XHost</span></a><div class="links"><a href="/dashboard">Dashboard</a><a href="/login" class="btn primary sm">Login</a></div></div></nav>
+<div class="wrap" style="max-width:900px;padding-top:50px;padding-bottom:50px">
+  <div class="sec-h" style="text-align:left"><div class="k">// api reference</div><h1 style="font-size:clamp(30px,5vw,46px);letter-spacing:-1.5px;margin:8px 0">Build your own <span class="grad">VPS app</span></h1>
+  <p style="margin:0">Base URL: <code class="mono" id="base"></code> · All requests and responses are JSON.</p></div>
+
+  <div class="card ep"><h3>🔑 Authentication</h3>
+    <p>API access is granted per account by the owner <a class="grad2" href="https://t.me/khalid_dev" target="_blank" rel="noopener">@khalid_dev</a>. Once enabled you receive a key starting with <code class="mono">kx_</code>. Send it on every request:</p>
+<pre class="code">Authorization: Bearer kx_your_api_key
+<span class="c"># or</span>
+X-API-Key: kx_your_api_key</pre>
+    <p style="margin-top:12px">Your account must have your <b>Fly.io token linked</b> in the dashboard (Fly Account) — VPS machines are created on your own Fly account. Rate limit: <b>120 requests / minute</b> per key. Errors return <code class="mono">{"detail": "message"}</code> with an HTTP status (401 bad key, 403 no API access, 429 rate limited).</p></div>
+
+  <div class="card ep"><h3><span class="m GET">GET</span>/api/v1/me</h3><p>Your account, Fly link status and VPS quota.</p>
+<pre class="code">curl <span class="u"></span>/api/v1/me -H "Authorization: Bearer kx_..."</pre></div>
+
+  <div class="card ep"><h3><span class="m GET">GET</span>/api/v1/options</h3><p>Allowed regions, CPU counts, RAM (MB) and disk (GB) values.</p></div>
+
+  <div class="card ep"><h3><span class="m POST">POST</span>/api/v1/vps</h3><p>Create a VPS. Returns <b>202</b> immediately with <code class="mono">status: "DEPLOYING"</code> — poll <code class="mono">GET /api/v1/vps/{id}</code> until status is <code class="mono">RUNNING</code> (usually 3–5 min). A random suffix is added to <code class="mono">name</code>.</p>
+<pre class="code">curl -X POST /api/v1/vps \
+  -H "Authorization: Bearer kx_..." -H "Content-Type: application/json" \
+  -d '{
+    "name": "my-panel",
+    "region": "iad",
+    "cpus": 2,
+    "memory_mb": 4096,
+    "storage_gb": 20
+  }'</pre>
+    <p style="margin-top:12px">Allowed: <code class="mono">cpus</code> 1, 2, 4, 8, 16 · <code class="mono">memory_mb</code> 1024–65536 (powers of two) · <code class="mono">storage_gb</code> 1, 3, 5, 10, 20, 40, 50, 100, 200.</p>
+<pre class="code"><span class="c"># response</span>
+{
+  "id": 12, "name": "my-panel-a1f3", "status": "DEPLOYING", "region": "iad",
+  "cpus": 2, "memory_mb": 4096, "storage_gb": 20,
+  "ipv4": null, "ssh": {"host": null, "port": 22, "user": "root", "password": "…"},
+  "progress": ["… Queued"], "error": null
+}</pre></div>
+
+  <div class="card ep"><h3><span class="m GET">GET</span>/api/v1/vps</h3><p>List your VPS machines (without passwords).</p></div>
+  <div class="card ep"><h3><span class="m GET">GET</span>/api/v1/vps/{id}</h3><p>Full details including SSH host/port/user/password, deployment <code class="mono">progress</code> lines and <code class="mono">error</code> if it failed.</p></div>
+  <div class="card ep"><h3><span class="m POST">POST</span>/api/v1/vps/{id}/refresh</h3><p>Sync status and IPs from Fly.io.</p></div>
+  <div class="card ep"><h3><span class="m POST">POST</span>/api/v1/vps/{id}/start <span class="mut">·</span> /stop <span class="mut">·</span> /restart</h3><p>Power actions. Call <code class="mono">/refresh</code> a few seconds later to see the new state.</p></div>
+  <div class="card ep"><h3><span class="m DELETE">DELETE</span>/api/v1/vps/{id}</h3><p>Destroy the machine, volume and Fly app. Irreversible.</p></div>
+
+  <div class="card ep"><h3>📦 Status values</h3><p><code class="mono">DEPLOYING</code> · <code class="mono">RUNNING</code> · <code class="mono">STOPPED</code> · <code class="mono">STARTING</code> · <code class="mono">STOPPING</code> · <code class="mono">RESTARTING</code> · <code class="mono">FAILED</code></p></div>
+
+  <div class="card ep"><h3>🐍 Python example</h3>
+<pre class="code"><span class="k">import</span> requests, time
+API = <span class="s">"https://khalidxhost.zone.id/api/v1"</span>
+H = {<span class="s">"Authorization"</span>: <span class="s">"Bearer kx_your_api_key"</span>}
+
+vps = requests.post(f<span class="s">"{API}/vps"</span>, headers=H, json={
+    <span class="s">"name"</span>: <span class="s">"bot-host"</span>, <span class="s">"region"</span>: <span class="s">"fra"</span>, <span class="s">"cpus"</span>: 2, <span class="s">"memory_mb"</span>: 4096, <span class="s">"storage_gb"</span>: 20
+}).json()
+
+<span class="k">while</span> vps[<span class="s">"status"</span>] == <span class="s">"DEPLOYING"</span>:
+    time.sleep(10)
+    vps = requests.get(f<span class="s">"{API}/vps/{vps['id']}"</span>, headers=H).json()
+
+print(vps[<span class="s">"ssh_command"</span>], vps[<span class="s">"ssh"</span>][<span class="s">"password"</span>])</pre></div>
+
+  <div class="card" style="text-align:center"><p style="margin-bottom:14px">Need API access or have a question?</p><a class="btn primary" href="https://t.me/khalid_dev" target="_blank" rel="noopener">💜 Message @khalid_dev</a></div>
+</div>
+<script src="/static/js/common.js"></script>
+<script src="/static/js/docs.js"></script>
+</body></html>

@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: khalidxhost
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips='*'
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ENCRYPTION_KEY
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        sync: false        # set this in the Render dashboard (never commit it)
+      - key: DATABASE_URL
+        sync: false        # Postgres URL (Neon / Supabase / Render Postgres) — see README
+      - key: ADMIN_PATH
+        value: khalid
+      - key: OWNER_TELEGRAM
+        value: khalid_dev

@@ -184,3 +184,10 @@ curl -X POST ${esc(base)}/api/v1/vps \\
 }
 
 boot();
+
+document.addEventListener("click", (e) => {
+  const c = e.target.closest(".chip[data-k]");
+  if (!c) return;
+  sel[c.dataset.k] = Number(c.dataset.val);
+  $$(`.chip[data-k="${c.dataset.k}"]`).forEach((x) => x.classList.toggle("on", x === c));
+});

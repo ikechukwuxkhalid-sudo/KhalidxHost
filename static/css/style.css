@@ -167,3 +167,5 @@ select option{background:#10121c}
   .kv{grid-template-columns:1fr auto}.kv .k{grid-column:1/-1}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.main{min-width:0}
+@media(max-width:860px){.shell{grid-template-columns:minmax(0,1fr)}}
